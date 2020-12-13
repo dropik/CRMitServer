@@ -3,21 +3,19 @@
     public class EmailResponseSender : IResponseSender
     {
         private readonly IEmailSender emailSender;
-        private readonly string emailBody;
-        private readonly string emailObject;
+        private readonly ApplicationSettings settings;
 
-        public EmailResponseSender(IEmailSender emailSender, string emailBody, string emailObject)
+        public EmailResponseSender(IEmailSender emailSender, ApplicationSettings settings)
         {
             this.emailSender = emailSender;
-            this.emailBody = emailBody;
-            this.emailObject = emailObject;
+            this.settings = settings;
         }
 
         public void SendToClient(Client client)
         {
             emailSender.Mailto = client.Email;
-            emailSender.EmailBody = emailBody;
-            emailSender.Object = emailObject;
+            emailSender.EmailBody = settings.PurchaseResponseEmailBody;
+            emailSender.Object = settings.PurchaseResponseEmailObject;
             emailSender.Send();
         }
     }

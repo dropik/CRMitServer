@@ -10,6 +10,7 @@ namespace CRMitServer.UnitTests
         private Mock<IEmailSender> emailSender;
         private EmailResponseSender responseSender;
         private Client client;
+        private ApplicationSettings settings;
 
         private const string CLIENT_EMAIL = "test@example.com";
         private const string EMAIL_BODY = "Thank you for the purchase!";
@@ -19,18 +20,22 @@ namespace CRMitServer.UnitTests
         public void SetUp()
         {
             emailSender = new Mock<IEmailSender>();
-            responseSender = new EmailResponseSender(emailSender.Object, EMAIL_BODY, EMAIL_OBJECT);
+            settings = new ApplicationSettings()
+            {
+                PurchaseResponseEmailBody = EMAIL_BODY,
+                PurchaseResponseEmailObject = EMAIL_OBJECT
+            };
             client = new Client()
             {
                 Email = CLIENT_EMAIL
             };
+            responseSender = new EmailResponseSender(emailSender.Object, settings);
         }
 
         [Test]
         public void TestMailtoIsSet()
         {
             responseSender.SendToClient(client);
-
             emailSender
                 .VerifySet(mock =>
                     mock.Mailto = It.Is<string>(email =>
@@ -42,7 +47,6 @@ namespace CRMitServer.UnitTests
         public void TestResponseBodyIsSet()
         {
             responseSender.SendToClient(client);
-
             emailSender
                 .VerifySet(mock =>
                     mock.EmailBody = It.Is<string>(body =>
@@ -54,7 +58,6 @@ namespace CRMitServer.UnitTests
         public void TestObjectIsSet()
         {
             responseSender.SendToClient(client);
-
             emailSender
                 .VerifySet(mock =>
                     mock.Object = It.Is<string>(obj =>
@@ -66,9 +69,7 @@ namespace CRMitServer.UnitTests
         public void TestEmailSenderIsCalled()
         {
             responseSender.SendToClient(client);
-
-            emailSender
-                .Verify(mock => mock.Send(), Times.Once);
+            emailSender.Verify(mock => mock.Send(), Times.Once);
         }
     }
 }
