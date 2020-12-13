@@ -2,20 +2,17 @@
 {
     public class EmailResponseSender : IResponseSender
     {
-        private readonly IEmailSender emailSender;
-        private readonly ApplicationSettings settings;
+        private readonly IEmailSenderFactory emailSenderFactory;
 
-        public EmailResponseSender(IEmailSender emailSender, ApplicationSettings settings)
+        public EmailResponseSender(IEmailSenderFactory emailSenderFactory)
         {
-            this.emailSender = emailSender;
-            this.settings = settings;
+            this.emailSenderFactory = emailSenderFactory;
         }
 
         public void SendToClient(Client client)
         {
+            var emailSender = emailSenderFactory.Create();
             emailSender.Mailto = client.Email;
-            emailSender.EmailBody = settings.PurchaseResponseEmailBody;
-            emailSender.Object = settings.PurchaseResponseEmailObject;
             emailSender.Send();
         }
     }

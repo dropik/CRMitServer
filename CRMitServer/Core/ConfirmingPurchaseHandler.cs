@@ -2,17 +2,17 @@
 {
     public class ConfirmingPurchaseHandler : IPurchaseHandler
     {
-        private IEventContainer CurrentEventContainer { get; }
+        private readonly IEventContainer eventContainer;
 
         public ConfirmingPurchaseHandler(IEventContainer eventContainer)
         {
-            CurrentEventContainer = eventContainer;
+            this.eventContainer = eventContainer;
         }
 
         public void HandleRequest(PurchaseRequest request)
         {
             var args = new ClientEventArgs(request.SenderClient);
-            CurrentEventContainer.SendPurchaseMessage(args);
+            eventContainer.SendPurchaseMessage(args);
         }
     }
 }

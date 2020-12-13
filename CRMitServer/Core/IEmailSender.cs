@@ -4,7 +4,7 @@
     {
         string Mailto { get; set; }
         string EmailBody { get; set; }
-        string Object { get; set; }
+        string EmailObject { get; set; }
 
         void Send();
     }
