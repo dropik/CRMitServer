@@ -2,16 +2,16 @@
 {
     public class EmailResponseSender : IResponseSender
     {
-        private readonly IEmailSenderFactory emailSenderFactory;
+        private readonly IEmailSenderBuilder emailBuilder;
 
-        public EmailResponseSender(IEmailSenderFactory emailSenderFactory)
+        public EmailResponseSender(IEmailSenderBuilder emailBuilder)
         {
-            this.emailSenderFactory = emailSenderFactory;
+            this.emailBuilder = emailBuilder;
         }
 
         public void SendToClient(Client client)
         {
-            var emailSender = emailSenderFactory.Create();
+            var emailSender = emailBuilder.Make();
             emailSender.Mailto = client.Email;
             emailSender.Send();
         }
