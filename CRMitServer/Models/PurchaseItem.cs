@@ -1,4 +1,4 @@
-namespace CRMitServer.Core
+namespace CRMitServer.Models
 {
     public class PurchaseItem
     {

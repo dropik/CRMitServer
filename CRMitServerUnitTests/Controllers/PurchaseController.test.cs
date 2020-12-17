@@ -1,10 +1,11 @@
+using Microsoft.AspNetCore.Mvc;
 using NUnit.Framework;
 using Moq;
-using CRMitServer.Core;
+using CRMitServer.Api;
 using CRMitServer.Controllers;
-using Microsoft.AspNetCore.Mvc;
+using CRMitServer.Exceptions;
 
-namespace CRMitServer.UnitTests
+namespace CRMitServer.UnitTests.Controllers
 {
     [TestFixture]
     public class PurchaseControllerTests

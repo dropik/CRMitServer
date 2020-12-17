@@ -1,4 +1,7 @@
-﻿namespace CRMitServer.Core
+﻿using CRMitServer.Api;
+using CRMitServer.Models;
+
+namespace CRMitServer.Core
 {
     public class Application : IApplication
     {

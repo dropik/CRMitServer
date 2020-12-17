@@ -1,4 +1,6 @@
 ﻿using System;
+using CRMitServer.Api;
+using CRMitServer.Models;
 
 namespace CRMitServer.Core
 {

@@ -1,4 +1,6 @@
-﻿namespace CRMitServer.Core
+﻿using CRMitServer.Models;
+
+namespace CRMitServer.Api
 {
     public interface IPurchaseHandler
     {

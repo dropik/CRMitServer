@@ -1,8 +1,10 @@
 ﻿using NUnit.Framework;
 using Moq;
+using CRMitServer.Api;
 using CRMitServer.Core;
+using CRMitServer.Models;
 
-namespace CRMitServer.UnitTests
+namespace CRMitServer.UnitTests.Core
 {
     [TestFixture]
     public class ConfirmingPurchaseHandlerTests

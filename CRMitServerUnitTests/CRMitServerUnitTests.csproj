@@ -5,7 +5,7 @@
 
     <IsPackable>false</IsPackable>
 
-    <RootNamespace>CRMitServer</RootNamespace>
+    <RootNamespace>CRMitServer.UnitTests</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
