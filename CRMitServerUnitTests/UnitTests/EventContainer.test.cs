@@ -6,19 +6,26 @@ namespace CRMitServer.UnitTests
     [TestFixture]
     public class EventContainerTests
     {
+        private EventContainer eventContainer;
+        private ClientEventArgs args;
+
         const string CLIENT_NAME = "Ivan";
 
-        [Test]
-        public void TestSendPurchaseMessageInvokesPurchaseEvent()
+        [SetUp]
+        public void SetUp()
         {
-            var eventContainer = new EventContainer();
-            eventContainer.Purchase += AssertEventCalled;
+            eventContainer = new EventContainer();
             var client = new Client()
             {
                 Name = CLIENT_NAME
             };
-            var args = new ClientEventArgs(client);
+            args = new ClientEventArgs(client);
+        }
 
+        [Test]
+        public void TestSendPurchaseMessageInvokesPurchaseEvent()
+        {
+            eventContainer.Purchase += AssertEventCalled;
             eventContainer.SendPurchaseMessage(args);
             Assert.Fail("Event Purchase was not invoked.");
         }
@@ -27,6 +34,20 @@ namespace CRMitServer.UnitTests
         {
             Assert.That(args.TargetClient.Name == CLIENT_NAME);
             Assert.Pass();
+        }
+
+        [Test]
+        public void TestSendPurchaseDoesNotFailOnMissingHandlers()
+        {
+            try
+            {
+                eventContainer.SendPurchaseMessage(args);
+                Assert.Pass();
+            }
+            catch (System.NullReferenceException)
+            {
+                Assert.Fail("NullReferenceException occured on trying to send a purchase message.");
+            }
         }
     }
 }
