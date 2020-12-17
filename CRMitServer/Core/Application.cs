@@ -1,6 +1,6 @@
 ﻿namespace CRMitServer.Core
 {
-    public class Application
+    public class Application : IApplication
     {
         private readonly IDatabase database;
         private readonly IPurchaseHandler purchaseHandler;
