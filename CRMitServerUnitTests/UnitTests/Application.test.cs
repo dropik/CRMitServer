@@ -7,43 +7,77 @@ namespace CRMitServer.UnitTests
     [TestFixture]
     public class ApplicationTests
     {
-        [Test]
-        public void TestPurchaseHandlerCalledOnPurchaseRequest()
+        private Mock<IDatabase> mockDb;
+        private Mock<IPurchaseHandler> mockPurchaseHandler;
+        private Application application;
+
+        private const int CLIENT_ID = 12;
+        private const int ITEM_ID = 100;
+        private const string CLIENT_NAME = "Ivan";
+
+        [SetUp]
+        public void SetUp()
         {
-            const int ITEM_ID = 100;
-            var purchaseHandler = new Mock<IPurchaseHandler>();
-            var application = new Application()
-            {
-                CurrentPurchaseHandler = purchaseHandler.Object
-            };
-            var purchaseRequest = new PurchaseRequest()
-            {
-                ItemId = ITEM_ID
-            };
-
-            application.HandlePurchaseRequest(purchaseRequest);
-
-            purchaseHandler
-                .Verify(mock => mock.HandleRequest(
-                    It.Is<PurchaseRequest>(req => req.ItemId == ITEM_ID)),
-                    Times.Once);
+            mockDb = new Mock<IDatabase>();
+            mockPurchaseHandler = new Mock<IPurchaseHandler>();
+            application = new Application(mockDb.Object, mockPurchaseHandler.Object);
         }
 
         [Test]
-        public void TestPurchaseHandlingOnNullHandler()
+        public void TestClientResolvedOnPurchaseRequest()
         {
-            var application = new Application();
-            var purchaseRequest = new PurchaseRequest();
+            ExecutePurchaseRequest();
+            AssertTriedToResolveClient();
+        }
 
-            try
-            {
-                application.HandlePurchaseRequest(purchaseRequest);
-                Assert.Pass();
-            }
-            catch (System.NullReferenceException)
-            {
-                Assert.Fail("Apparently Application attemted to call purchase handler, when it was not set.");
-            }
+        private void ExecutePurchaseRequest()
+        {
+            application.HandlePurchaseRequest(CLIENT_ID, ITEM_ID);
+        }
+
+        private void AssertTriedToResolveClient()
+        {
+            mockDb.Verify(
+                mock => mock.GetClientById(It.Is<int>(id => id == CLIENT_ID)),
+                Times.Once);
+        }
+
+        [Test]
+        public void TestPurchaseItemResolvedOnPurchaseRequest()
+        {
+            ExecutePurchaseRequest();
+            AssertTriedToResolveItem();
+        }
+
+        private void AssertTriedToResolveItem()
+        {
+            mockDb.Verify(
+                mock => mock.GetItemById(It.Is<int>(id => id == ITEM_ID)),
+                Times.Once);
+        }
+
+        [Test]
+        public void TestPurchaseRequestSendedToHandler()
+        {
+            SetupDbResults();
+            ExecutePurchaseRequest();
+            AssertPurchaseHandlerCalledCorrectly();
+        }
+
+        private void SetupDbResults()
+        {
+            mockDb.Setup(mock => mock.GetClientById(It.IsAny<int>()))
+                  .Returns(new Client() { Name = CLIENT_NAME });
+            mockDb.Setup(mock => mock.GetItemById(It.IsAny<int>()))
+                  .Returns(new PurchaseItem() { ItemId = ITEM_ID });
+        }
+
+        private void AssertPurchaseHandlerCalledCorrectly()
+        {
+            mockPurchaseHandler
+                .Verify(mock => mock.Handle(It.Is<PurchaseRequest>(req =>
+                            (req.SenderClient.Name == CLIENT_NAME) && (req.Item.ItemId == ITEM_ID))),
+                        Times.Once);
         }
     }
 }

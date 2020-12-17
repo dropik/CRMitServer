@@ -2,7 +2,7 @@
 {
     public class PurchaseRequest
     {
-        public int ItemId { get; set; }
         public Client SenderClient { get; set; }
+        public PurchaseItem Item { get; set; }
     }
 }

@@ -2,11 +2,27 @@
 {
     public class Application
     {
-        public IPurchaseHandler CurrentPurchaseHandler { get; set; }
+        private readonly IDatabase database;
+        private readonly IPurchaseHandler purchaseHandler;
 
-        public void HandlePurchaseRequest(PurchaseRequest request)
+        public Application(IDatabase database, IPurchaseHandler purchaseHandler)
         {
-            CurrentPurchaseHandler?.HandleRequest(request);
+            this.database = database;
+            this.purchaseHandler = purchaseHandler;
+        }
+
+        public void HandlePurchaseRequest(int clientId, int itemId)
+        {
+            var request = ConstructPurchaseRequest(clientId, itemId);
+            purchaseHandler.Handle(request);
+        }
+
+        private PurchaseRequest ConstructPurchaseRequest(int clientId, int itemId)
+        {
+            return new PurchaseRequest() {
+                SenderClient = database.GetClientById(clientId),
+                Item = database.GetItemById(itemId)
+            };
         }
     }
 }

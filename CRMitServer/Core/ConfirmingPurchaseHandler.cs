@@ -9,7 +9,7 @@
             this.eventContainer = eventContainer;
         }
 
-        public void HandleRequest(PurchaseRequest request)
+        public void Handle(PurchaseRequest request)
         {
             var args = new ClientEventArgs(request.SenderClient);
             eventContainer.SendPurchaseMessage(args);

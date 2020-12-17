@@ -22,7 +22,7 @@ namespace CRMitServer.UnitTests
                 SenderClient = client
             };
 
-            purchaseHandler.HandleRequest(request);
+            purchaseHandler.Handle(request);
 
             eventContainer
                 .Verify(mock => mock.SendPurchaseMessage(

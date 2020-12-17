@@ -2,6 +2,6 @@
 {
     public interface IPurchaseHandler
     {
-        void HandleRequest(PurchaseRequest request);
+        void Handle(PurchaseRequest request);
     }
 }
