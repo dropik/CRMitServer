@@ -5,16 +5,19 @@ namespace CRMitServer.Core
 {
     public class EmailResponseSender : IResponseSender
     {
-        private readonly IEmailSenderBuilder emailBuilder;
+        private readonly IEmailSender emailSender;
+        private readonly PurchaseResponseSettings settings;
 
-        public EmailResponseSender(IEmailSenderBuilder emailBuilder)
+        public EmailResponseSender(IEmailSender emailSender, PurchaseResponseSettings settings)
         {
-            this.emailBuilder = emailBuilder;
+            this.emailSender = emailSender;
+            this.settings = settings;
         }
 
         public void SendToClient(Client client)
         {
-            var emailSender = emailBuilder.Make();
+            emailSender.EmailObject = settings.EmailObject;
+            emailSender.EmailBody = settings.EmailBody;
             emailSender.Mailto = client.Email;
             emailSender.Send();
         }

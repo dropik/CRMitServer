@@ -10,17 +10,19 @@ namespace CRMitServer.UnitTests.Core
     public class EmailResponseSenderTests
     {
         private Mock<IEmailSender> emailSender;
-        private Mock<IEmailSenderBuilder> emailBuilder;
-        private EmailResponseSender responseSender;
+        private PurchaseResponseSettings settings;
         private Client client;
+        private EmailResponseSender responseSender;
 
         private const string CLIENT_EMAIL = "test@example.com";
+        private const string TEST_OBJECT = "Purchase confirmed";
+        private const string TEST_BODY = "Thank you for purchase!";
 
         [SetUp]
         public void SetUp()
         {
             SetupEmailSender();
-            SetupEmailBuilder();
+            SetupSettings();
             SetupClient();
             SetupEmailResponseSender();
         }
@@ -30,11 +32,13 @@ namespace CRMitServer.UnitTests.Core
             emailSender = new Mock<IEmailSender>();
         }
 
-        private void SetupEmailBuilder()
+        private void SetupSettings()
         {
-            emailBuilder = new Mock<IEmailSenderBuilder>();
-            emailBuilder.Setup(mock => mock.Make())
-                        .Returns(emailSender.Object);
+            settings = new PurchaseResponseSettings()
+            {
+                EmailObject = TEST_OBJECT,
+                EmailBody = TEST_BODY
+            };
         }
 
         private void SetupClient()
@@ -47,30 +51,49 @@ namespace CRMitServer.UnitTests.Core
 
         private void SetupEmailResponseSender()
         {
-            responseSender = new EmailResponseSender(emailBuilder.Object);
+            responseSender = new EmailResponseSender(emailSender.Object, settings);
+        }
+
+        private void Act()
+        {
+            responseSender.SendToClient(client);
         }
 
         [Test]
-        public void TestBuilderWasCalled()
+        public void TestEmailObjectIsSet()
         {
-            responseSender.SendToClient(client);
-            emailBuilder.Verify(mock => mock.Make(), Times.Once);
+            Act();
+            emailSender.VerifySet(
+                m => m.EmailObject = It.Is<string>(obj => obj == TEST_OBJECT),
+                Times.Once
+            );
+        }
+
+        [Test]
+        public void TestEmailBodyIsSet()
+        {
+            Act();
+            emailSender.VerifySet(
+                m => m.EmailBody = It.Is<string>(body => body == TEST_BODY),
+                Times.Once
+            );
         }
 
         [Test]
         public void TestMailtoIsSet()
         {
-            responseSender.SendToClient(client);
+            Act();
             emailSender.VerifySet(
-                mock => mock.Mailto = It.Is<string>(email => email == CLIENT_EMAIL),
-                Times.Once);
+                m => m.Mailto = It.Is<string>(email => email == CLIENT_EMAIL),
+                Times.Once
+            );
         }
 
         [Test]
         public void TestEmailSenderIsCalled()
         {
-            responseSender.SendToClient(client);
-            emailSender.Verify(mock => mock.Send(), Times.Once);
+            Act();
+            emailSender.Verify(m => m.Send(), Times.Once);
         }
     }
 }
