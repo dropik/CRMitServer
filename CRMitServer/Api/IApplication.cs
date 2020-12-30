@@ -1,7 +1,9 @@
+using System.Threading.Tasks;
+
 namespace CRMitServer.Api
 {
     public interface IApplication
     {
-        void HandlePurchaseRequest(int clientId, int itemId);
+        Task HandlePurchaseRequest(int clientId, int itemId);
     }
 }

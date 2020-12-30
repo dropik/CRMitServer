@@ -1,4 +1,5 @@
-﻿using CRMitServer.Api;
+﻿using System.Threading.Tasks;
+using CRMitServer.Api;
 using CRMitServer.Models;
 
 namespace CRMitServer.Core
@@ -14,12 +15,12 @@ namespace CRMitServer.Core
             this.settings = settings;
         }
 
-        public void SendToClient(Client client)
+        public async Task SendToClient(Client client)
         {
             emailSender.EmailObject = settings.EmailObject;
             emailSender.EmailBody = settings.EmailBody;
             emailSender.Mailto = client.Email;
-            emailSender.Send();
+            await emailSender.SendAsync();
         }
     }
 }

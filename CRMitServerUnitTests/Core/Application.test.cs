@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using System.Threading.Tasks;
+using NUnit.Framework;
 using Moq;
 using CRMitServer.Api;
 using CRMitServer.Core;
@@ -26,58 +27,58 @@ namespace CRMitServer.UnitTests.Core
         }
 
         [Test]
-        public void TestClientResolvedOnPurchaseRequest()
+        public async Task TestClientResolvedOnPurchaseRequest()
         {
-            ExecutePurchaseRequest();
+            await ExecutePurchaseRequest();
             AssertTriedToResolveClient();
         }
 
-        private void ExecutePurchaseRequest()
+        private async Task ExecutePurchaseRequest()
         {
-            application.HandlePurchaseRequest(CLIENT_ID, ITEM_ID);
+            await application.HandlePurchaseRequest(CLIENT_ID, ITEM_ID);
         }
 
         private void AssertTriedToResolveClient()
         {
             mockDb.Verify(
-                mock => mock.GetClientById(It.Is<int>(id => id == CLIENT_ID)),
+                m => m.GetClientById(It.Is<int>(id => id == CLIENT_ID)),
                 Times.Once);
         }
 
         [Test]
-        public void TestPurchaseItemResolvedOnPurchaseRequest()
+        public async Task TestPurchaseItemResolvedOnPurchaseRequest()
         {
-            ExecutePurchaseRequest();
+            await ExecutePurchaseRequest();
             AssertTriedToResolveItem();
         }
 
         private void AssertTriedToResolveItem()
         {
             mockDb.Verify(
-                mock => mock.GetItemById(It.Is<int>(id => id == ITEM_ID)),
+                m => m.GetItemById(It.Is<int>(id => id == ITEM_ID)),
                 Times.Once);
         }
 
         [Test]
-        public void TestPurchaseRequestSendedToHandler()
+        public async Task TestPurchaseRequestSendedToHandler()
         {
             SetupDbResults();
-            ExecutePurchaseRequest();
+            await ExecutePurchaseRequest();
             AssertPurchaseHandlerCalledCorrectly();
         }
 
         private void SetupDbResults()
         {
-            mockDb.Setup(mock => mock.GetClientById(It.IsAny<int>()))
-                  .Returns(new Client() { Name = CLIENT_NAME });
-            mockDb.Setup(mock => mock.GetItemById(It.IsAny<int>()))
-                  .Returns(new PurchaseItem() { ItemId = ITEM_ID });
+            mockDb.Setup(m => m.GetClientById(It.IsAny<int>()))
+                  .Returns(Task.FromResult(new Client() {Name = CLIENT_NAME }));
+            mockDb.Setup(m => m.GetItemById(It.IsAny<int>()))
+                  .Returns(Task.FromResult(new PurchaseItem() { ItemId = ITEM_ID }));
         }
 
         private void AssertPurchaseHandlerCalledCorrectly()
         {
             mockPurchaseHandler
-                .Verify(mock => mock.Handle(It.Is<PurchaseRequest>(req =>
+                .Verify(m => m.Handle(It.Is<PurchaseRequest>(req =>
                             (req.SenderClient.Name == CLIENT_NAME) && (req.Item.ItemId == ITEM_ID))),
                         Times.Once);
         }

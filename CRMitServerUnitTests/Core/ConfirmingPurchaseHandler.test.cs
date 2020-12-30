@@ -9,27 +9,39 @@ namespace CRMitServer.UnitTests.Core
     [TestFixture]
     public class ConfirmingPurchaseHandlerTests
     {
-        [Test]
-        public void TestPurchaseEventIsInvoked()
+        private Client client;
+        private Mock<IEventContainer> mockEventContainer;
+        private PurchaseRequest request;
+        private ConfirmingPurchaseHandler purchaseHandler;
+
+        private const string CLIENT_NAME = "Ivan";
+
+        [SetUp]
+        public void SetUp()
         {
-            const string CLIENT_NAME = "Ivan";
-            var client = new Client()
+            client = new Client()
             {
                 Name = CLIENT_NAME
             };
-            var eventContainer = new Mock<IEventContainer>();
-            var purchaseHandler = new ConfirmingPurchaseHandler(eventContainer.Object);
-            var request = new PurchaseRequest()
+            mockEventContainer = new Mock<IEventContainer>();
+            request = new PurchaseRequest()
             {
                 SenderClient = client
             };
+            purchaseHandler = new ConfirmingPurchaseHandler(mockEventContainer.Object);
+        }
 
+        [Test]
+        public void TestPurchaseEventIsInvoked()
+        {
             purchaseHandler.Handle(request);
 
-            eventContainer
-                .Verify(mock => mock.SendPurchaseMessage(
-                    It.Is<ClientEventArgs>(args => args.TargetClient.Name == CLIENT_NAME)),
-                    Times.Once);
+            mockEventContainer.Verify(
+                m => m.SendPurchaseMessage(
+                    It.Is<ClientEventArgs>(args => args.TargetClient.Name == CLIENT_NAME)
+                ),
+                Times.Once
+            );
         }
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace CRMitServer.Api
+﻿using System.Threading.Tasks;
+
+namespace CRMitServer.Api
 {
     public interface IEmailSender
     {
@@ -6,6 +8,6 @@
         string EmailBody { get; set; }
         string EmailObject { get; set; }
 
-        void Send();
+        Task SendAsync();
     }
 }

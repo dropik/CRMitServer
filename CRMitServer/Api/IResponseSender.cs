@@ -1,9 +1,10 @@
-﻿using CRMitServer.Models;
+﻿using System.Threading.Tasks;
+using CRMitServer.Models;
 
 namespace CRMitServer.Api
 {
     public interface IResponseSender
     {
-        void SendToClient(Client client);
+        Task SendToClient(Client client);
     }
 }

@@ -1,4 +1,5 @@
-﻿using CRMitServer.Api;
+﻿using System.Threading.Tasks;
+using CRMitServer.Api;
 using CRMitServer.Models;
 
 namespace CRMitServer.Core
@@ -14,17 +15,22 @@ namespace CRMitServer.Core
             this.purchaseHandler = purchaseHandler;
         }
 
-        public void HandlePurchaseRequest(int clientId, int itemId)
+        public async Task HandlePurchaseRequest(int clientId, int itemId)
         {
-            var request = ConstructPurchaseRequest(clientId, itemId);
+            var request =  await ConstructPurchaseRequest(clientId, itemId);
             purchaseHandler.Handle(request);
         }
 
-        private PurchaseRequest ConstructPurchaseRequest(int clientId, int itemId)
+        private async Task<PurchaseRequest> ConstructPurchaseRequest(int clientId, int itemId)
         {
+            var getClientTask = database.GetClientById(clientId);
+            var getItemTask = database.GetItemById(itemId);
+
+            await Task.WhenAll(getClientTask, getItemTask);
+
             return new PurchaseRequest() {
-                SenderClient = database.GetClientById(clientId),
-                Item = database.GetItemById(itemId)
+                SenderClient = await getClientTask,
+                Item = await getItemTask
             };
         }
     }

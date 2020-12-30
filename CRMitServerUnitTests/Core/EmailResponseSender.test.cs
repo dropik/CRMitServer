@@ -3,6 +3,7 @@ using Moq;
 using CRMitServer.Api;
 using CRMitServer.Core;
 using CRMitServer.Models;
+using System.Threading.Tasks;
 
 namespace CRMitServer.UnitTests.Core
 {
@@ -54,15 +55,15 @@ namespace CRMitServer.UnitTests.Core
             responseSender = new EmailResponseSender(emailSender.Object, settings);
         }
 
-        private void Act()
+        private async Task Act()
         {
-            responseSender.SendToClient(client);
+            await responseSender.SendToClient(client);
         }
 
         [Test]
-        public void TestEmailObjectIsSet()
+        public async Task TestEmailObjectIsSet()
         {
-            Act();
+            await Act();
             emailSender.VerifySet(
                 m => m.EmailObject = It.Is<string>(obj => obj == TEST_OBJECT),
                 Times.Once
@@ -70,9 +71,9 @@ namespace CRMitServer.UnitTests.Core
         }
 
         [Test]
-        public void TestEmailBodyIsSet()
+        public async Task TestEmailBodyIsSet()
         {
-            Act();
+            await Act();
             emailSender.VerifySet(
                 m => m.EmailBody = It.Is<string>(body => body == TEST_BODY),
                 Times.Once
@@ -80,9 +81,9 @@ namespace CRMitServer.UnitTests.Core
         }
 
         [Test]
-        public void TestMailtoIsSet()
+        public async Task TestMailtoIsSet()
         {
-            Act();
+            await Act();
             emailSender.VerifySet(
                 m => m.Mailto = It.Is<string>(email => email == CLIENT_EMAIL),
                 Times.Once
@@ -90,10 +91,10 @@ namespace CRMitServer.UnitTests.Core
         }
 
         [Test]
-        public void TestEmailSenderIsCalled()
+        public async Task TestEmailSenderIsCalled()
         {
-            Act();
-            emailSender.Verify(m => m.Send(), Times.Once);
+            await Act();
+            emailSender.Verify(m => m.SendAsync(), Times.Once);
         }
     }
 }
