@@ -19,7 +19,7 @@ namespace CRMitServer.Controllers
         {
             try
             {
-                application.HandlePurchaseRequest(clientId, itemId);
+                application.HandlePurchaseRequestAsync(clientId, itemId);
                 return Ok();
             }
             catch (RequestException)

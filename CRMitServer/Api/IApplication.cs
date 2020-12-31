@@ -4,6 +4,6 @@ namespace CRMitServer.Api
 {
     public interface IApplication
     {
-        Task HandlePurchaseRequest(int clientId, int itemId);
+        Task HandlePurchaseRequestAsync(int clientId, int itemId);
     }
 }

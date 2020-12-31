@@ -35,13 +35,13 @@ namespace CRMitServer.UnitTests.Core
 
         private async Task ExecutePurchaseRequest()
         {
-            await application.HandlePurchaseRequest(CLIENT_ID, ITEM_ID);
+            await application.HandlePurchaseRequestAsync(CLIENT_ID, ITEM_ID);
         }
 
         private void AssertTriedToResolveClient()
         {
             mockDb.Verify(
-                m => m.GetClientById(It.Is<int>(id => id == CLIENT_ID)),
+                m => m.GetClientByIdAsync(It.Is<int>(id => id == CLIENT_ID)),
                 Times.Once);
         }
 
@@ -55,7 +55,7 @@ namespace CRMitServer.UnitTests.Core
         private void AssertTriedToResolveItem()
         {
             mockDb.Verify(
-                m => m.GetItemById(It.Is<int>(id => id == ITEM_ID)),
+                m => m.GetItemByIdAsync(It.Is<int>(id => id == ITEM_ID)),
                 Times.Once);
         }
 
@@ -69,9 +69,9 @@ namespace CRMitServer.UnitTests.Core
 
         private void SetupDbResults()
         {
-            mockDb.Setup(m => m.GetClientById(It.IsAny<int>()))
+            mockDb.Setup(m => m.GetClientByIdAsync(It.IsAny<int>()))
                   .Returns(Task.FromResult(new Client() {Name = CLIENT_NAME }));
-            mockDb.Setup(m => m.GetItemById(It.IsAny<int>()))
+            mockDb.Setup(m => m.GetItemByIdAsync(It.IsAny<int>()))
                   .Returns(Task.FromResult(new PurchaseItem() { ItemId = ITEM_ID }));
         }
 

@@ -57,7 +57,7 @@ namespace CRMitServer.UnitTests.Core
 
         private async Task Act()
         {
-            await responseSender.SendToClient(client);
+            await responseSender.SendToClientAsync(client);
         }
 
         [Test]

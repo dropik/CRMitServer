@@ -5,6 +5,6 @@ namespace CRMitServer.Api
 {
     public interface IResponseSender
     {
-        Task SendToClient(Client client);
+        Task SendToClientAsync(Client client);
     }
 }

@@ -15,7 +15,7 @@ namespace CRMitServer.Core
             this.settings = settings;
         }
 
-        public async Task SendToClient(Client client)
+        public async Task SendToClientAsync(Client client)
         {
             emailSender.EmailObject = settings.EmailObject;
             emailSender.EmailBody = settings.EmailBody;

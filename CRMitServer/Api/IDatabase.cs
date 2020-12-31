@@ -5,7 +5,7 @@ namespace CRMitServer.Api
 {
     public interface IDatabase
     {
-        Task<Client> GetClientById(int id);
-        Task<PurchaseItem> GetItemById(int id);
+        Task<Client> GetClientByIdAsync(int id);
+        Task<PurchaseItem> GetItemByIdAsync(int id);
     }
 }

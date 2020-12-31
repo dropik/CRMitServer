@@ -38,7 +38,7 @@ namespace CRMitServer.UnitTests.Controllers
         private void AssertApplicationRequestedForPurchase()
         {
             mockApp.Verify(
-                mock => mock.HandlePurchaseRequest(
+                mock => mock.HandlePurchaseRequestAsync(
                     It.Is<int>(clientId => clientId == CLIENT_ID),
                     It.Is<int>(itemId => itemId == ITEM_ID)),
                 Times.Once);
@@ -61,7 +61,7 @@ namespace CRMitServer.UnitTests.Controllers
 
         private void SetupApplicationToThrowException()
         {
-            mockApp.Setup(mock => mock.HandlePurchaseRequest(It.IsAny<int>(), It.IsAny<int>()))
+            mockApp.Setup(mock => mock.HandlePurchaseRequestAsync(It.IsAny<int>(), It.IsAny<int>()))
                    .Throws<RequestException>();
         }
     }
