@@ -8,7 +8,7 @@ namespace CRMitServer.UnitTests.Core
     public class EventContainerTests
     {
         private EventContainer eventContainer;
-        private ClientEventArgs args;
+        private Client client;
 
         const string CLIENT_NAME = "Ivan";
 
@@ -16,24 +16,23 @@ namespace CRMitServer.UnitTests.Core
         public void SetUp()
         {
             eventContainer = new EventContainer();
-            var client = new Client()
+            client = new Client()
             {
                 Name = CLIENT_NAME
             };
-            args = new ClientEventArgs(client);
         }
 
         [Test]
         public void TestSendPurchaseMessageInvokesPurchaseEvent()
         {
             eventContainer.Purchase += AssertEventCalled;
-            eventContainer.SendPurchaseMessage(args);
+            eventContainer.SendPurchaseMessage(client);
             Assert.Fail("Event Purchase was not invoked.");
         }
 
-        private void AssertEventCalled(object sender, ClientEventArgs args)
+        private void AssertEventCalled(Client client)
         {
-            Assert.That(args.TargetClient.Name == CLIENT_NAME);
+            Assert.That(client.Name == CLIENT_NAME);
             Assert.Pass();
         }
 
@@ -42,7 +41,7 @@ namespace CRMitServer.UnitTests.Core
         {
             try
             {
-                eventContainer.SendPurchaseMessage(args);
+                eventContainer.SendPurchaseMessage(client);
                 Assert.Pass();
             }
             catch (System.NullReferenceException)

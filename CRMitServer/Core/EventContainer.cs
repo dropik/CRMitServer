@@ -6,11 +6,11 @@ namespace CRMitServer.Core
 {
     public class EventContainer : IEventContainer
     {
-        public event EventHandler<ClientEventArgs> Purchase;
+        public event Action<Client> Purchase;
 
-        public void SendPurchaseMessage(ClientEventArgs args)
+        public void SendPurchaseMessage(Client client)
         {
-            Purchase?.Invoke(this, args);
+            Purchase?.Invoke(client);
         }
     }
 }

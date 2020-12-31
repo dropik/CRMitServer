@@ -14,8 +14,7 @@ namespace CRMitServer.Core
 
         public void Handle(PurchaseRequest request)
         {
-            var args = new ClientEventArgs(request.SenderClient);
-            eventContainer.SendPurchaseMessage(args);
+            eventContainer.SendPurchaseMessage(request.SenderClient);
         }
     }
 }

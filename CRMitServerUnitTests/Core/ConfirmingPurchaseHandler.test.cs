@@ -38,7 +38,7 @@ namespace CRMitServer.UnitTests.Core
 
             mockEventContainer.Verify(
                 m => m.SendPurchaseMessage(
-                    It.Is<ClientEventArgs>(args => args.TargetClient.Name == CLIENT_NAME)
+                    It.Is<Client>(client => client.Name == CLIENT_NAME)
                 ),
                 Times.Once
             );

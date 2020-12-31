@@ -5,7 +5,7 @@ namespace CRMitServer.Api
 {
     public interface IEventContainer
     {
-        event EventHandler<ClientEventArgs> Purchase;
-        void SendPurchaseMessage(ClientEventArgs args);
+        event Action<Client> Purchase;
+        void SendPurchaseMessage(Client client);
     }
 }
