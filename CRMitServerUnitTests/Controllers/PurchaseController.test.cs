@@ -4,6 +4,7 @@ using Moq;
 using CRMitServer.Api;
 using CRMitServer.Controllers;
 using CRMitServer.Exceptions;
+using System.Threading.Tasks;
 
 namespace CRMitServer.UnitTests.Controllers
 {
@@ -24,15 +25,15 @@ namespace CRMitServer.UnitTests.Controllers
         }
 
         [Test]
-        public void TestRequestHandledByApp()
+        public async Task TestRequestHandledByApp()
         {
-            _ = ExecutePurchase();
+            _ = await ExecutePurchase();
             AssertApplicationRequestedForPurchase();
         }
 
-        private IActionResult ExecutePurchase()
+        private async Task<IActionResult> ExecutePurchase()
         {
-            return purchaseController.Purchase(CLIENT_ID, ITEM_ID);
+            return await purchaseController.Purchase(CLIENT_ID, ITEM_ID);
         }
 
         private void AssertApplicationRequestedForPurchase()
@@ -45,17 +46,17 @@ namespace CRMitServer.UnitTests.Controllers
         }
 
         [Test]
-        public void TestOkResult()
+        public async Task TestOkResult()
         {
-            var result = ExecutePurchase();
+            var result = await ExecutePurchase();
             Assert.That(result, Is.TypeOf<OkResult>());
         }
 
         [Test]
-        public void TestBadRequestOnExceptionThrown()
+        public async Task TestBadRequestOnExceptionThrown()
         {
             SetupApplicationToThrowException();
-            var result = ExecutePurchase();
+            var result = await ExecutePurchase();
             Assert.That(result, Is.TypeOf<BadRequestResult>());
         }
 
