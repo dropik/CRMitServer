@@ -11,7 +11,7 @@ namespace CRMitServer.UnitTests.Core
     {
         private Client client;
         private Mock<IEventContainer> mockEventContainer;
-        private PurchaseRequest request;
+        private PurchaseData request;
         private ConfirmingPurchaseHandler purchaseHandler;
 
         private const string CLIENT_NAME = "Ivan";
@@ -24,7 +24,7 @@ namespace CRMitServer.UnitTests.Core
                 Name = CLIENT_NAME
             };
             mockEventContainer = new Mock<IEventContainer>();
-            request = new PurchaseRequest()
+            request = new PurchaseData()
             {
                 SenderClient = client
             };

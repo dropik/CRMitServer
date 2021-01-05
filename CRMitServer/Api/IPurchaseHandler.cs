@@ -4,6 +4,6 @@ namespace CRMitServer.Api
 {
     public interface IPurchaseHandler
     {
-        void Handle(PurchaseRequest request);
+        void Handle(PurchaseData request);
     }
 }

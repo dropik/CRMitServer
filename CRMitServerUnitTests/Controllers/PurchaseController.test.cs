@@ -5,6 +5,7 @@ using CRMitServer.Api;
 using CRMitServer.Controllers;
 using CRMitServer.Exceptions;
 using System.Threading.Tasks;
+using CRMitServer.Models;
 
 namespace CRMitServer.UnitTests.Controllers
 {
@@ -12,6 +13,7 @@ namespace CRMitServer.UnitTests.Controllers
     public class PurchaseControllerTests
     {
         private Mock<IApplication> mockApp;
+        private PurchaseRequest request;
         private PurchaseController purchaseController;
 
         private const int CLIENT_ID = 12;
@@ -21,6 +23,11 @@ namespace CRMitServer.UnitTests.Controllers
         public void SetUp()
         {
             mockApp = new Mock<IApplication>();
+            request = new PurchaseRequest()
+            {
+                ClientId = CLIENT_ID,
+                ItemId = ITEM_ID
+            };
             purchaseController = new PurchaseController(mockApp.Object);
         }
 
@@ -33,7 +40,7 @@ namespace CRMitServer.UnitTests.Controllers
 
         private async Task<IActionResult> ExecutePurchase()
         {
-            return await purchaseController.Purchase(CLIENT_ID, ITEM_ID);
+            return await purchaseController.Purchase(request);
         }
 
         private void AssertApplicationRequestedForPurchase()

@@ -1,8 +1,8 @@
-﻿namespace CRMitServer.Models
+namespace CRMitServer.Models
 {
     public class PurchaseRequest
     {
-        public Client SenderClient { get; set; }
-        public PurchaseItem Item { get; set; }
+        public int ClientId { get; set; }
+        public int ItemId { get; set; }
     }
 }

@@ -2,6 +2,7 @@
 using CRMitServer.Api;
 using CRMitServer.Exceptions;
 using System.Threading.Tasks;
+using CRMitServer.Models;
 
 namespace CRMitServer.Controllers
 {
@@ -16,11 +17,11 @@ namespace CRMitServer.Controllers
             this.application = application;
         }
 
-        public async Task<IActionResult> Purchase(int clientId, int itemId)
+        public async Task<IActionResult> Purchase(PurchaseRequest request)
         {
             try
             {
-                await application.HandlePurchaseRequestAsync(clientId, itemId);
+                await application.HandlePurchaseRequestAsync(request.ClientId, request.ItemId);
                 return Ok();
             }
             catch (RequestException)

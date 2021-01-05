@@ -12,7 +12,7 @@ namespace CRMitServer.Core
             this.eventContainer = eventContainer;
         }
 
-        public void Handle(PurchaseRequest request)
+        public void Handle(PurchaseData request)
         {
             eventContainer.SendPurchaseMessage(request.SenderClient);
         }

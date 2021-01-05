@@ -21,14 +21,14 @@ namespace CRMitServer.Core
             purchaseHandler.Handle(request);
         }
 
-        private async Task<PurchaseRequest> ConstructPurchaseRequestAsync(int clientId, int itemId)
+        private async Task<PurchaseData> ConstructPurchaseRequestAsync(int clientId, int itemId)
         {
             var getClientTask = database.GetClientByIdAsync(clientId);
             var getItemTask = database.GetItemByIdAsync(itemId);
 
             await Task.WhenAll(getClientTask, getItemTask);
 
-            return new PurchaseRequest() {
+            return new PurchaseData() {
                 SenderClient = await getClientTask,
                 Item = await getItemTask
             };

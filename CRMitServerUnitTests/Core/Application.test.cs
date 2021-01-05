@@ -78,7 +78,7 @@ namespace CRMitServer.UnitTests.Core
         private void AssertPurchaseHandlerCalledCorrectly()
         {
             mockPurchaseHandler
-                .Verify(m => m.Handle(It.Is<PurchaseRequest>(req =>
+                .Verify(m => m.Handle(It.Is<PurchaseData>(req =>
                             (req.SenderClient.Name == CLIENT_NAME) && (req.Item.ItemId == ITEM_ID))),
                         Times.Once);
         }
