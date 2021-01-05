@@ -47,8 +47,11 @@ namespace CRMitServer.UnitTests.Controllers
         {
             mockApp.Verify(
                 mock => mock.HandlePurchaseRequestAsync(
-                    It.Is<int>(clientId => clientId == CLIENT_ID),
-                    It.Is<int>(itemId => itemId == ITEM_ID)),
+                    It.Is<PurchaseRequest>(req =>
+                        req.ClientId == CLIENT_ID &&
+                        req.ItemId == ITEM_ID
+                    )
+                ),
                 Times.Once);
         }
 
@@ -69,7 +72,7 @@ namespace CRMitServer.UnitTests.Controllers
 
         private void SetupApplicationToThrowException()
         {
-            mockApp.Setup(mock => mock.HandlePurchaseRequestAsync(It.IsAny<int>(), It.IsAny<int>()))
+            mockApp.Setup(mock => mock.HandlePurchaseRequestAsync(It.IsAny<PurchaseRequest>()))
                    .Throws<RequestException>();
         }
     }

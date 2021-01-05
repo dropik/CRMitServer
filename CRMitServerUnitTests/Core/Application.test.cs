@@ -12,6 +12,7 @@ namespace CRMitServer.UnitTests.Core
     {
         private Mock<IDatabase> mockDb;
         private Mock<IPurchaseHandler> mockPurchaseHandler;
+        private PurchaseRequest request;
         private Application application;
 
         private const int CLIENT_ID = 12;
@@ -23,6 +24,11 @@ namespace CRMitServer.UnitTests.Core
         {
             mockDb = new Mock<IDatabase>();
             mockPurchaseHandler = new Mock<IPurchaseHandler>();
+            request = new PurchaseRequest()
+            {
+                ClientId = CLIENT_ID,
+                ItemId = ITEM_ID
+            };
             application = new Application(mockDb.Object, mockPurchaseHandler.Object);
         }
 
@@ -35,7 +41,7 @@ namespace CRMitServer.UnitTests.Core
 
         private async Task ExecutePurchaseRequest()
         {
-            await application.HandlePurchaseRequestAsync(CLIENT_ID, ITEM_ID);
+            await application.HandlePurchaseRequestAsync(request);
         }
 
         private void AssertTriedToResolveClient()

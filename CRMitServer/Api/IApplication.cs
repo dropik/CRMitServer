@@ -1,9 +1,10 @@
 using System.Threading.Tasks;
+using CRMitServer.Models;
 
 namespace CRMitServer.Api
 {
     public interface IApplication
     {
-        Task HandlePurchaseRequestAsync(int clientId, int itemId);
+        Task HandlePurchaseRequestAsync(PurchaseRequest request);
     }
 }

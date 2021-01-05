@@ -21,7 +21,7 @@ namespace CRMitServer.Controllers
         {
             try
             {
-                await application.HandlePurchaseRequestAsync(request.ClientId, request.ItemId);
+                await application.HandlePurchaseRequestAsync(request);
                 return Ok();
             }
             catch (RequestException)
