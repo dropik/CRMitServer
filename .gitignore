@@ -344,3 +344,6 @@ healthchecksdb
 
 # MacOS
 **.DS_Store
+
+# Integration tests
+**/credentials.json
