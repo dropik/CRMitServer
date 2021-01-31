@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using CRMitServer.Api;
+using CRMitServer.Core;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -18,11 +20,10 @@ namespace CRMitServer
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
-        }
 
-        protected virtual void RegisterDatabase(IServiceCollection services)
-        {
-
+            services.AddSingleton<IApplication, Application>();
+            services.AddTransient<IPurchaseHandler, ConfirmingPurchaseHandler>();
+            services.AddSingleton<IEventContainer, EventContainer>();
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)

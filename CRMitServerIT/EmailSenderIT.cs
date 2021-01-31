@@ -4,9 +4,7 @@ using Google.Apis.Auth.OAuth2;
 using Google.Apis.Gmail.v1;
 using Google.Apis.Services;
 using Google.Apis.Util.Store;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using Newtonsoft.Json;
@@ -22,45 +20,31 @@ namespace CRMitServer.IT
     [TestFixture]
     public class EmailSenderIT
     {
-        internal class OnlyEmailSenderStartup : Startup
-        {
-            public OnlyEmailSenderStartup(IConfiguration configuration) : base(configuration) { }
-
-            protected override void RegisterDatabase(IServiceCollection services)
-            {
-                services.AddSingleton(mockDatabase.Object);
-            }
-        }
-
-        internal class CRMitServerApplicationFactory : WebApplicationFactory<Startup>
-        {
-            //protected override IWebHostBuilder CreateWebHostBuilder()
-            //{
-            //    var builder = new WebHostBuilder();
-            //    builder.UseStartup<OnlyEmailSenderStartup>();
-            //    return builder;
-            //}
-        }
-
-        private CRMitServerApplicationFactory factory;
-        private static Mock<IDatabase> mockDatabase;
+        private WebApplicationFactory<Startup> factory;
 
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
-            factory = new CRMitServerApplicationFactory();
+            factory = new WebApplicationFactory<Startup>();
         }
 
-        [SetUp]
-        public void SetUp()
+        [OneTimeTearDown]
+        public void OneTimeTearDown()
         {
-            mockDatabase = new Mock<IDatabase>();
+            factory.Dispose();
         }
 
         [Test]
         public async Task TestEmailSent()
         {
-            var client = factory.CreateClient();
+            var mockDatabase = new Mock<IDatabase>();
+            var client = factory.WithWebHostBuilder(builder =>
+            {
+                builder.ConfigureServices(services =>
+                {
+                    services.AddSingleton<IDatabase>(mockDatabase.Object);
+                });
+            }).CreateClient();
             var request = new PurchaseRequest()
             {
                 ClientId = 0,
@@ -82,7 +66,7 @@ namespace CRMitServer.IT
                     scopes,
                     "user",
                     CancellationToken.None,
-                    new FileDataStore(credPath, true));
+                    new FileDataStore(credPath));
             }
 
             var service = new GmailService(new BaseClientService.Initializer()
