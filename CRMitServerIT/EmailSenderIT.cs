@@ -79,6 +79,7 @@ namespace CRMitServer.IT
             gmailRequest.Q = "Test Message";
             var messagesResponse = await gmailRequest.ExecuteAsync();
             var messages = messagesResponse.Messages;
+            Assert.That(messages, Is.Not.Null);
             Assert.That(messages.Count, Is.EqualTo(1));
         }
     }
