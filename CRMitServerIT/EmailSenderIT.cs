@@ -5,12 +5,12 @@ using Google.Apis.Gmail.v1;
 using Google.Apis.Services;
 using Google.Apis.Util.Store;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using Newtonsoft.Json;
 using NUnit.Framework;
 using System;
-using System.IO;
 using System.Net.Http;
 using System.Text;
 using System.Threading;
@@ -23,24 +23,30 @@ namespace CRMitServer.IT
     {
         private WebApplicationFactory<Startup> factory;
         private GmailService service;
+        private readonly IConfiguration config;
+
+        public EmailSenderIT()
+        {
+            var builder = new ConfigurationBuilder().AddUserSecrets<EmailSenderIT>();
+            config = builder.Build();
+        }
 
         [OneTimeSetUp]
         public async Task OneTimeSetup()
         {
             factory = new WebApplicationFactory<Startup>();
-            string[] scopes = { GmailService.Scope.MailGoogleCom };
-            string applicationName = "CRMitServerIT";
-            UserCredential credential;
-            using (var stream = new FileStream("credentials.json", FileMode.Open, FileAccess.Read))
-            {
-                string credPath = "CRMitServerIT/token";
-                credential = await GoogleWebAuthorizationBroker.AuthorizeAsync(
-                    GoogleClientSecrets.Load(stream).Secrets,
-                    scopes,
-                    "user",
-                    CancellationToken.None,
-                    new FileDataStore(credPath));
-            }
+
+            var scopes = new string[] { GmailService.Scope.MailGoogleCom };
+            var applicationName = "CRMitServerIT";
+            var secrets = config.GetSection("GmailAPICredentials").Get<ClientSecrets>();
+            var credPath = "CRMitServerIT/token";
+            var credential = await GoogleWebAuthorizationBroker.AuthorizeAsync(
+                secrets,
+                scopes,
+                "user",
+                CancellationToken.None,
+                new FileDataStore(credPath)
+            );
 
             service = new GmailService(new BaseClientService.Initializer()
             {
