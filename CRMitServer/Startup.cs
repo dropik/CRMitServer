@@ -1,5 +1,6 @@
 ﻿using CRMitServer.Api;
 using CRMitServer.Core;
+using CRMitServer.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -24,6 +25,14 @@ namespace CRMitServer
             services.AddSingleton<IApplication, Application>();
             services.AddTransient<IPurchaseHandler, ConfirmingPurchaseHandler>();
             services.AddSingleton<IEventContainer, EventContainer>();
+            services.AddSingleton<IResponseSender, EmailResponseSender>();
+            services.AddTransient<IEmailSender, EmailSender>();
+            services.AddSingleton(Configuration.Get<PurchaseResponseSettings>());
+            services.AddSingleton(Configuration.Get<EmailClientSettings>());
+
+            var provider = services.BuildServiceProvider();
+            var eventContainer = provider.GetService<IEventContainer>();
+            // register event handlers
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)

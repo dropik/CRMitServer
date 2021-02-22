@@ -23,23 +23,20 @@ namespace CRMitServer.IT
     {
         private WebApplicationFactory<Startup> factory;
         private GmailService service;
-        private readonly IConfiguration config;
-
-        public EmailSenderIT()
-        {
-            var builder = new ConfigurationBuilder().AddUserSecrets<EmailSenderIT>();
-            config = builder.Build();
-        }
 
         [OneTimeSetUp]
         public async Task OneTimeSetup()
         {
             factory = new WebApplicationFactory<Startup>();
 
+            var builder = new ConfigurationBuilder().AddUserSecrets<EmailSenderIT>();
+            var config = builder.Build();
+            var secrets = config.GetSection("GmailAPICredentials").Get<ClientSecrets>();
+
             var scopes = new string[] { GmailService.Scope.MailGoogleCom };
             var applicationName = "CRMitServerIT";
-            var secrets = config.GetSection("GmailAPICredentials").Get<ClientSecrets>();
             var credPath = "CRMitServerIT/token";
+
             var credential = await GoogleWebAuthorizationBroker.AuthorizeAsync(
                 secrets,
                 scopes,
@@ -103,12 +100,8 @@ namespace CRMitServer.IT
                     services.AddSingleton(mockDatabase.Object);
                     services.AddSingleton(new PurchaseResponseSettings()
                     {
-                        EmailBody = "Thank you for the purchase!",
-                        EmailObject = expectedEmailObject
-                    });
-                    services.AddSingleton(new EmailClientSettings()
-                    {
-                        // Configure some settings
+                        EmailSubject = expectedEmailObject,
+                        EmailBody = "Thank you for the purchase!"
                     });
                 });
             }).CreateClient();

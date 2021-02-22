@@ -1,6 +1,8 @@
 ﻿using NUnit.Framework;
 using CRMitServer.Core;
 using CRMitServer.Models;
+using System.Threading.Tasks;
+using System;
 
 namespace CRMitServer.UnitTests.Core
 {
@@ -23,28 +25,29 @@ namespace CRMitServer.UnitTests.Core
         }
 
         [Test]
-        public void TestSendPurchaseMessageInvokesPurchaseEvent()
+        public async Task TestSendPurchaseMessageInvokesPurchaseEvent()
         {
             eventContainer.Purchase += AssertEventCalled;
-            eventContainer.SendPurchaseMessage(client);
+            await eventContainer.SendPurchaseMessage(client);
             Assert.Fail("Event Purchase was not invoked.");
         }
 
-        private void AssertEventCalled(Client client)
+        private Task AssertEventCalled(Client client)
         {
             Assert.That(client.Name == CLIENT_NAME);
             Assert.Pass();
+            return Task.CompletedTask;
         }
 
         [Test]
-        public void TestSendPurchaseDoesNotFailOnMissingHandlers()
+        public async Task TestSendPurchaseDoesNotFailOnMissingHandlers()
         {
             try
             {
-                eventContainer.SendPurchaseMessage(client);
+                await eventContainer.SendPurchaseMessage(client);
                 Assert.Pass();
             }
-            catch (System.NullReferenceException)
+            catch (NullReferenceException)
             {
                 Assert.Fail("NullReferenceException occured on trying to send a purchase message.");
             }

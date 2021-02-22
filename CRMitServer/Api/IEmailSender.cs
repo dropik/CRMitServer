@@ -6,7 +6,7 @@ namespace CRMitServer.Api
     {
         string Mailto { get; set; }
         string EmailBody { get; set; }
-        string EmailObject { get; set; }
+        string EmailSubject { get; set; }
 
         Task SendAsync();
     }

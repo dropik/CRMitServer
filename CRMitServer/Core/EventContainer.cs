@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using CRMitServer.Api;
 using CRMitServer.Models;
 
@@ -6,11 +7,14 @@ namespace CRMitServer.Core
 {
     public class EventContainer : IEventContainer
     {
-        public event Action<Client> Purchase;
+        public event Func<Client, Task> Purchase;
 
-        public void SendPurchaseMessage(Client client)
+        public async Task SendPurchaseMessage(Client client)
         {
-            Purchase?.Invoke(client);
+            if (Purchase != null)
+            {
+                await Purchase.Invoke(client);
+            }
         }
     }
 }
