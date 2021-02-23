@@ -1,21 +1,25 @@
 ﻿using CRMitServer.Api;
 using CRMitServer.Models;
+using System;
 using System.Threading.Tasks;
 
 namespace CRMitServer.Core
 {
     public class ConfirmingPurchaseHandler : IPurchaseHandler
     {
-        private readonly IEventContainer eventContainer;
+        private readonly Func<Client, Task> purchaseAction;
 
-        public ConfirmingPurchaseHandler(IEventContainer eventContainer)
+        public ConfirmingPurchaseHandler(Func<Client, Task> purchaseAction)
         {
-            this.eventContainer = eventContainer;
+            this.purchaseAction = purchaseAction;
         }
 
         public async Task HandleAsync(PurchaseData request)
         {
-            await eventContainer.SendPurchaseMessage(request.SenderClient);
+            if (purchaseAction != null)
+            {
+                await purchaseAction.Invoke(request.SenderClient);
+            }
         }
     }
 }
