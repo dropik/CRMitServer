@@ -4,11 +4,11 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
-using Newtonsoft.Json;
 using NUnit.Framework;
 using System;
 using System.Net.Http;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace CRMitServer.IT
@@ -94,7 +94,7 @@ namespace CRMitServer.IT
                 ClientId = 0,
                 ItemId = 0
             };
-            var jsonContent = new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
+            var jsonContent = new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json");
             return await client.PostAsync("/api/purchase", jsonContent);
         }
 
