@@ -1,12 +1,7 @@
 ﻿using CRMitServer.Api;
 using CRMitServer.Models;
-using Google.Apis.Auth.OAuth2;
-using Google.Apis.Gmail.v1;
-using Google.Apis.Services;
-using Google.Apis.Util.Store;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using Newtonsoft.Json;
@@ -14,7 +9,6 @@ using NUnit.Framework;
 using System;
 using System.Net.Http;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace CRMitServer.IT
@@ -23,59 +17,41 @@ namespace CRMitServer.IT
     public class EmailSenderIT
     {
         private WebApplicationFactory<Startup> factory;
-        private GmailService service;
+        private GmailHelper gmailHelper;
 
         [OneTimeSetUp]
         public async Task OneTimeSetup()
         {
             factory = new WebApplicationFactory<Startup>();
 
-            // creating gmail service
-            var builder = new ConfigurationBuilder().AddUserSecrets<EmailSenderIT>();
-            var config = builder.Build();
-            var secrets = config.GetSection("GmailAPICredentials").Get<ClientSecrets>();
-
-            var scopes = new string[] { GmailService.Scope.MailGoogleCom };
-            var applicationName = "CRMitServerIT";
-            var credPath = "CRMitServerIT/token";
-
-            var credential = await GoogleWebAuthorizationBroker.AuthorizeAsync(
-                secrets,
-                scopes,
-                "user",
-                CancellationToken.None,
-                new FileDataStore(credPath)
-            );
-
-            service = new GmailService(new BaseClientService.Initializer()
-            {
-                HttpClientInitializer = credential,
-                ApplicationName = applicationName
-            });
-
-            // cleaning up eventual tests
-            var gmailRequest = service.Users.Messages.List("me");
-            gmailRequest.Q = "Test Message";
-            var messagesResponse = await gmailRequest.ExecuteAsync();
-            var messages = messagesResponse.Messages;
-            if (messages != null)
-            {
-                foreach (var message in messages)
-                {
-                    var deleteRequest = service.Users.Messages.Delete("me", message.Id);
-                    await deleteRequest.ExecuteAsync();
-                }
-            }
+            gmailHelper = await GmailHelper.CreateHelperAsync();
+            await gmailHelper.DeleteTestMessagesAsync();
         }
 
         [OneTimeTearDown]
         public void OneTimeTearDown()
         {
             factory.Dispose();
+            gmailHelper.Dispose();
         }
 
         [Test]
         public async Task TestEmailSent()
+        {
+            // Arrange
+            var database = CreateMockDatabase();
+            var expectedSubject = GenerateTestSubject();
+            var client = CreateAppClient(database, expectedSubject);
+
+            // Act
+            var response = await ObtainResponseAsync(client);
+
+            // Assert
+            response.EnsureSuccessStatusCode();
+            await AssertMessageSentAsync(expectedSubject);
+        }
+
+        private IDatabase CreateMockDatabase()
         {
             var mockDatabase = new Mock<IDatabase>();
             mockDatabase.Setup(m => m.GetClientByIdAsync(It.IsAny<int>())).ReturnsAsync(new Client()
@@ -87,38 +63,44 @@ namespace CRMitServer.IT
             {
                 ItemId = 0
             });
+            return mockDatabase.Object;
+        }
 
+        private string GenerateTestSubject()
+        {
             var random = new Random();
             var testMessageNumber = random.Next().ToString();
-            var expectedEmailObject = "Test Message #" + testMessageNumber;
+            return "Test Message #" + testMessageNumber;
+        }
 
-            var client = factory.WithWebHostBuilder(builder =>
+        private HttpClient CreateAppClient(IDatabase database, string testSubject) => 
+            factory.WithWebHostBuilder(builder =>
             {
                 builder.ConfigureTestServices(services =>
                 {
-                    services.AddSingleton(mockDatabase.Object);
+                    services.AddSingleton(database);
                     services.AddSingleton(new PurchaseResponseSettings()
                     {
-                        EmailSubject = expectedEmailObject,
+                        EmailSubject = testSubject,
                         EmailBody = "Thank you for the purchase!"
                     });
                 });
             }).CreateClient();
 
+        private async Task<HttpResponseMessage> ObtainResponseAsync(HttpClient client)
+        {
             var request = new PurchaseRequest()
             {
                 ClientId = 0,
                 ItemId = 0
             };
             var jsonContent = new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
-            var response = await client.PostAsync("/api/purchase", jsonContent);
+            return await client.PostAsync("/api/purchase", jsonContent);
+        }
 
-            response.EnsureSuccessStatusCode();
-
-            var gmailRequest = service.Users.Messages.List("me");
-            gmailRequest.Q = expectedEmailObject;
-            var messagesResponse = await gmailRequest.ExecuteAsync();
-            var messages = messagesResponse.Messages;
+        private async Task AssertMessageSentAsync(string expectedSubject)
+        {
+            var messages = await gmailHelper.GetMessagesByQueryAsync(expectedSubject);
             Assert.That(messages, Is.Not.Null);
             Assert.That(messages.Count, Is.EqualTo(1));
         }
