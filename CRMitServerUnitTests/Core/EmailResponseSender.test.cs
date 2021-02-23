@@ -37,7 +37,7 @@ namespace CRMitServer.UnitTests.Core
         {
             settings = new PurchaseResponseSettings()
             {
-                EmailObject = TEST_OBJECT,
+                EmailSubject = TEST_OBJECT,
                 EmailBody = TEST_BODY
             };
         }
@@ -65,7 +65,7 @@ namespace CRMitServer.UnitTests.Core
         {
             await Act();
             emailSender.VerifySet(
-                m => m.EmailObject = It.Is<string>(obj => obj == TEST_OBJECT),
+                m => m.EmailSubject = It.Is<string>(obj => obj == TEST_OBJECT),
                 Times.Once
             );
         }

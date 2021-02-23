@@ -2,7 +2,7 @@
 {
     public class PurchaseResponseSettings
     {
-        public string EmailObject { get; set; }
+        public string EmailSubject { get; set; }
         public string EmailBody { get; set; }
     }
 }

@@ -17,6 +17,7 @@ namespace CRMitServer.Controllers
             this.application = application;
         }
 
+        [HttpPost]
         public async Task<IActionResult> Purchase(PurchaseRequest request)
         {
             try

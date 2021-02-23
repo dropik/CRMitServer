@@ -17,7 +17,7 @@ namespace CRMitServer.Core
 
         public async Task SendToClientAsync(Client client)
         {
-            emailSender.EmailObject = settings.EmailObject;
+            emailSender.EmailSubject = settings.EmailSubject;
             emailSender.EmailBody = settings.EmailBody;
             emailSender.Mailto = client.Email;
             await emailSender.SendAsync();
