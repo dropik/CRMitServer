@@ -13,6 +13,7 @@
         <PackageReference Include="Microsoft.AspNetCore.HttpsPolicy" Version="2.1.1" />
         <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.1.3" />
         <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="2.1.3" />
+        <PackageReference Include="Microsoft.AspNetCore.TestHost" Version="2.1.1" />
         <PackageReference Include="Microsoft.Extensions.Hosting" Version="2.1.1" />
         <PackageReference Include="Moq" Version="4.16.0" />
         <PackageReference Include="nunit" Version="3.13.0" />
@@ -23,10 +24,5 @@
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\CRMitServer\CRMitServer.csproj" />
-    </ItemGroup>
-    <ItemGroup>
-        <None Update="credentials.json">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </None>
     </ItemGroup>
 </Project>

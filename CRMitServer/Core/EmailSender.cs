@@ -32,7 +32,7 @@ namespace CRMitServer.Core
 
             using (var client = new SmtpClient())
             {
-                client.Connect(settings.Server, settings.Port, settings.UseSSL);
+                client.Connect(settings.Server, settings.Port);
                 client.Authenticate(settings.Email, settings.Password);
                 await client.SendAsync(message);
                 client.Disconnect(true);

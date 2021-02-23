@@ -5,6 +5,7 @@ using Google.Apis.Gmail.v1;
 using Google.Apis.Services;
 using Google.Apis.Util.Store;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
@@ -29,6 +30,7 @@ namespace CRMitServer.IT
         {
             factory = new WebApplicationFactory<Startup>();
 
+            // creating gmail service
             var builder = new ConfigurationBuilder().AddUserSecrets<EmailSenderIT>();
             var config = builder.Build();
             var secrets = config.GetSection("GmailAPICredentials").Get<ClientSecrets>();
@@ -50,17 +52,8 @@ namespace CRMitServer.IT
                 HttpClientInitializer = credential,
                 ApplicationName = applicationName
             });
-        }
 
-        [OneTimeTearDown]
-        public void OneTimeTearDown()
-        {
-            factory.Dispose();
-        }
-
-        [TearDown]
-        public async Task TearDown()
-        {
+            // cleaning up eventual tests
             var gmailRequest = service.Users.Messages.List("me");
             gmailRequest.Q = "Test Message";
             var messagesResponse = await gmailRequest.ExecuteAsync();
@@ -73,6 +66,12 @@ namespace CRMitServer.IT
                     await deleteRequest.ExecuteAsync();
                 }
             }
+        }
+
+        [OneTimeTearDown]
+        public void OneTimeTearDown()
+        {
+            factory.Dispose();
         }
 
         [Test]
@@ -95,7 +94,7 @@ namespace CRMitServer.IT
 
             var client = factory.WithWebHostBuilder(builder =>
             {
-                builder.ConfigureServices(services =>
+                builder.ConfigureTestServices(services =>
                 {
                     services.AddSingleton(mockDatabase.Object);
                     services.AddSingleton(new PurchaseResponseSettings()
