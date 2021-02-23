@@ -3,6 +3,7 @@ using Moq;
 using CRMitServer.Api;
 using CRMitServer.Core;
 using CRMitServer.Models;
+using System.Threading.Tasks;
 
 namespace CRMitServer.UnitTests.Core
 {
@@ -32,9 +33,9 @@ namespace CRMitServer.UnitTests.Core
         }
 
         [Test]
-        public void TestPurchaseEventIsInvoked()
+        public async Task TestPurchaseEventIsInvoked()
         {
-            purchaseHandler.Handle(request);
+            await purchaseHandler.HandleAsync(request);
 
             mockEventContainer.Verify(
                 m => m.SendPurchaseMessage(

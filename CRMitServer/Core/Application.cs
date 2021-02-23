@@ -18,7 +18,7 @@ namespace CRMitServer.Core
         public async Task HandlePurchaseRequestAsync(PurchaseRequest request)
         {
             var data =  await GetPurchaseDataAsync(request);
-            purchaseHandler.Handle(data);
+            await purchaseHandler.HandleAsync(data);
         }
 
         private async Task<PurchaseData> GetPurchaseDataAsync(PurchaseRequest request)

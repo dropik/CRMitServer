@@ -1,5 +1,6 @@
 ﻿using CRMitServer.Api;
 using CRMitServer.Models;
+using System.Threading.Tasks;
 
 namespace CRMitServer.Core
 {
@@ -12,9 +13,9 @@ namespace CRMitServer.Core
             this.eventContainer = eventContainer;
         }
 
-        public void Handle(PurchaseData request)
+        public async Task HandleAsync(PurchaseData request)
         {
-            eventContainer.SendPurchaseMessage(request.SenderClient);
+            await eventContainer.SendPurchaseMessage(request.SenderClient);
         }
     }
 }

@@ -27,12 +27,14 @@ namespace CRMitServer
             services.AddSingleton<IEventContainer, EventContainer>();
             services.AddSingleton<IResponseSender, EmailResponseSender>();
             services.AddTransient<IEmailSender, EmailSender>();
-            services.AddSingleton(Configuration.Get<PurchaseResponseSettings>());
-            services.AddSingleton(Configuration.Get<EmailClientSettings>());
+
+            services.AddSingleton(Configuration.GetSection("PurchaseResponseSettings").Get<PurchaseResponseSettings>());
+            services.AddSingleton(Configuration.GetSection("EmailClientSettings").Get<EmailClientSettings>());
 
             var provider = services.BuildServiceProvider();
             var eventContainer = provider.GetService<IEventContainer>();
-            // register event handlers
+            var responseSender = provider.GetService<IResponseSender>();
+            eventContainer.Purchase += responseSender.SendToClientAsync;
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
