@@ -1,21 +1,21 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <TargetFramework>netcoreapp3.1</TargetFramework>
+        <TargetFramework>net5.0</TargetFramework>
         <UserSecretsId>ef5752bd-2a39-421c-b4ca-b41884fdc5f0</UserSecretsId>
         <IsPackable>false</IsPackable>
         <RootNamespace>CRMitServer.IT</RootNamespace>
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="Google.Apis.Gmail.v1" Version="1.50.0.2235" />
-        <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="3.1.12" />
-        <PackageReference Include="Microsoft.AspNetCore.TestHost" Version="3.1.12" />
-        <PackageReference Include="Microsoft.Extensions.Hosting" Version="3.1.12" />
+        <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="5.0.3" />
+        <PackageReference Include="Microsoft.AspNetCore.TestHost" Version="5.0.3" />
+        <PackageReference Include="Microsoft.Extensions.Hosting" Version="5.0.0" />
         <PackageReference Include="Moq" Version="4.16.0" />
         <PackageReference Include="nunit" Version="3.13.1" />
         <PackageReference Include="NUnit3TestAdapter" Version="3.17.0" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.9.1" />
-        <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="3.1.12" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="5.0.0" />
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\CRMitServer\CRMitServer.csproj" />
