@@ -22,7 +22,7 @@ namespace CRMitServer
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             services.AddSingleton<IApplication, Application>();
             services.AddTransient<IPurchaseHandler, ConfirmingPurchaseHandler>((provider) =>
