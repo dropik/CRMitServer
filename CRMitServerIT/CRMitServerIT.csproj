@@ -8,10 +8,6 @@
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="Google.Apis.Gmail.v1" Version="1.50.0.2235" />
-        <PackageReference Include="Microsoft.AspNetCore" Version="2.2.0" />
-        <PackageReference Include="Microsoft.AspNetCore.Diagnostics" Version="2.2.0" />
-        <PackageReference Include="Microsoft.AspNetCore.HttpsPolicy" Version="2.2.0" />
-        <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.2.0" />
         <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="3.1.12" />
         <PackageReference Include="Microsoft.AspNetCore.TestHost" Version="3.1.12" />
         <PackageReference Include="Microsoft.Extensions.Hosting" Version="3.1.12" />
